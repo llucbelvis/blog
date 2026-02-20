@@ -1,17 +1,63 @@
 ---
+import { getCollection } from 'astro:content';
 
+const titulo = "El Blog de Lluc";
+const posts = await getCollection('blog');
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>{titulo}</title>
+  </head>
+  <body>
+    <h1>{titulo}</h1>
+    <p>Bienvenido al blog. Aquí es donde Lluc escribirá sus artículos.</p>
+
+    <ul class="lista-posts">
+      {posts.map((post: any) => (
+        <li>
+          <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+        </li>
+      ))}
+    </ul>
+
+    <nav class="navegacion">
+      <a href="#" class="btn">← Anterior</a>
+      <a href="#" class="btn">Siguiente →</a>
+    </nav>
+  </body>
 </html>
+
+<style>
+  /* Tu CSS que ya tienes... */
+  body {
+    font-family: 'Georgia', serif;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 20px;
+    color: #333;
+    background-color: #fdfdfd;
+  }
+  .lista-posts {
+    list-style: none;
+    padding: 0;
+  }
+  .lista-posts li {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+  }
+  .navegacion {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+  }
+  .btn {
+    text-decoration: none;
+    color: #0070f3;
+    font-weight: bold;
+  }
+</style>
