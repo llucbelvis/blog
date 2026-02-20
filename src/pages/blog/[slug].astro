@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+
+// 1. Generamos las rutas para cada post
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post: any, index: number) => ({
+    params: { slug: post.slug },
+    props: { 
+      post,
+      // Pasamos el post anterior y el siguiente para las flechas
+      prevPost: index > 0 ? posts[index - 1] : null,
+      nextPost: index < posts.length - 1 ? posts[index + 1] : null
+    },
+  }));
+}
+
+// 2. Recogemos los datos del post
+const { post, prevPost, nextPost } = Astro.props as any;
+const { Content } = await post.render();
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>{post.data.title}</title>
+  </head>
+  <body>
+    <a href="/">← Volver al inicio</a>
+    
+    <article>
+      <h1>{post.data.title}</h1>
+      <p class="fecha">{post.data.date.toLocaleDateString()}</p>
+      <hr />
+      <Content /> </article>
+
+    <nav class="navegacion">
+      {prevPost ? (
+        <a href={`/blog/${prevPost.slug}`} class="btn">← {prevPost.data.title}</a>
+      ) : <span />} 
+      
+      {nextPost ? (
+        <a href={`/blog/${nextPost.slug}`} class="btn">{nextPost.data.title} →</a>
+      ) : <span />}
+    </nav>
+  </body>
+</html>
+
+<style>
+  /* Usamos el mismo estilo de legibilidad que en la portada */
+  body {
+    font-family: 'Georgia', serif;
+    line-height: 1.6;
+    max-width: 700px;
+    margin: 50px auto;
+    padding: 20px;
+    color: #333;
+  }
+  .fecha { color: #666; font-style: italic; }
+  .navegacion {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+  .btn { text-decoration: none; color: #0070f3; font-weight: bold; }
+</style>
