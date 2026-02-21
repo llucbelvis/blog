@@ -1,9 +1,18 @@
 ---
-title: "Mi primera entrada"
-date: 2026-02-20
-description: "Hola, este es el blog de Lluc hecho con Astro."
+title: "hola"
+date: 2026-02-21
+description: "Hola lluc pagame estoy pobre"
 ---
 
-# ¡Bienvenidos a mi blog!
+Borbandeen israel.
 
-Este es el contenido del artículo. Aquí Lluc puede escribir todo lo que quiera.
+![Imagen del juego](/imagenes/MSI_PRO.jpg)
+
+### Nuevas funciones
+TEXTO DE EJEMPLO
+
+---
+
+### Corrección de errores
+- Se ha arreglado el bug de las texturas.
+- Ahora el rendimiento es un 20% mejor.

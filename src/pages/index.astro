@@ -1,63 +1,234 @@
 ---
 import { getCollection } from 'astro:content';
 
-const titulo = "El Blog de Lluc";
-const posts = await getCollection('blog');
+// 1. Cargamos todos los posts y los ordenamos por fecha (el más nuevo primero)
+const allPosts = await getCollection('blog');
+const posts = allPosts.sort((a: any, b: any) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// 2. Elegimos el primero de la lista (el más reciente)
+const lastPost = posts[0];
+
+// 3. Preparamos la navegación (en el index, el "Siguiente" será nulo porque ya es el último)
+const prevPost = posts[1]; // El segundo más nuevo es el "Anterior" respecto al primero
+const { Content } = await lastPost.render();
 ---
 
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <title>{titulo}</title>
+    <title>{lastPost.data.title}</title>
   </head>
   <body>
-    <h1>{titulo}</h1>
-    <p>Bienvenido al blog. Aquí es donde Lluc escribirá sus artículos.</p>
+    <header class="barra-superior">
+      <div class="header-contenido">
+        <div class="usuario">
+          <div class="avatar">LB</div>
+          <div class="datos">
+            <span class="nombre">Lluc Belvis Balsera</span>
+            <span class="correo">llucbelvis@gmail.com</span>
+          </div>
+        </div>
+        <nav class="menu-vacio">
+          <span>Official Blog</span>
+        </nav>
+      </div>
+    </header>
+    <main class="contenedor-principal">
+      <div class="controles-superiores">
+        <div class="etiqueta-portada">Last Devlog</div>
+        
+        <nav class="navegacion-superior">
+          {prevPost ? (
+            <a href={`/blog/${prevPost.slug}`} class="nav-link">← Previous</a>
+          ) : <span class="disabled">← Previous</span>} 
+          
+          <span class="separador">|</span>
+          
+          <span class="disabled">Next →</span> </nav>
+      </div>
 
-    <ul class="lista-posts">
-      {posts.map((post: any) => (
-        <li>
-          <a href={`/blog/${post.slug}`}>{post.data.title}</a>
-        </li>
-      ))}
-    </ul>
-
-    <nav class="navegacion">
-      <a href="#" class="btn">← Anterior</a>
-      <a href="#" class="btn">Siguiente →</a>
-    </nav>
+      <article>
+        <h1>{lastPost.data.title}</h1>
+        <p class="fecha">{lastPost.data.date.toLocaleDateString()}</p>
+        <hr />
+        <Content /> 
+      </article>
+    </main>
   </body>
 </html>
 
-<style>
-  /* Tu CSS que ya tienes... */
+<style is:global>
   body {
-    font-family: 'Georgia', serif;
-    line-height: 1.6;
-    max-width: 700px;
-    margin: 50px auto;
-    padding: 20px;
-    color: #333;
-    background-color: #fdfdfd;
-  }
-  .lista-posts {
-    list-style: none;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; /* Más moderna que Georgia */
+    line-height: 1.7;
+    color: #2d3436;
+    background-color: #ffffff;
+    margin: 0;
     padding: 0;
   }
-  .lista-posts li {
+
+  article {
+    max-width: 900px; /* Un poco más ancho para las imágenes */
+    margin: 60px auto;
+    padding: 0 20px;
+  }
+
+  h1 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #1a1a1a;
+    line-height: 1.2;
     margin-bottom: 10px;
-    font-size: 1.2rem;
   }
-  .navegacion {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 40px;
-    border-top: 1px solid #eee;
-    padding-top: 20px;
+
+  .fecha {
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #636e72;
+    font-size: 0.9rem;
   }
+
+  /* Estilo para las imágenes que Lluc ponga en el Markdown */
+  article img {
+    width: 100%;
+    border-radius: 8px;
+    margin: 30px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+
   .btn {
     text-decoration: none;
-    color: #0070f3;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+    color: #0984e3;
+  }
+
+  .btn span {
+    font-size: 0.8rem;
+    color: #b2bec3;
+    text-transform: uppercase;
+  }
+  .barra-superior {
+    width: 100%;
+    border-bottom: 1px solid #f1f2f6;
+    padding: 15px 0;
+    background: #fff;
+  }
+
+  .header-contenido {
+    max-width: 850px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+  }
+
+  .usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #dfe6e9; /* Gris suave */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-weight: bold;
+    color: #636e72;
+    font-size: 0.8rem;
+  }
+
+  .datos {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .nombre {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #1a1a1a;
+    line-height: 1.2;
+  }
+
+  .correo {
+    font-size: 0.75rem;
+    color: #b2bec3;
+  }
+
+  .menu-vacio {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #0984e3; /* Azul Polymorph */
+  }
+  .contenedor-principal {
+    max-width: 900px;
+    margin: 30px auto; 
+    padding: 0 20px;
+  }
+
+  .controles-superiores {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f1f2f6;
+  }
+
+  .etiqueta-portada {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #0984e3; /* Azul Polymorph */
+    background: #e1f0ff;
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+
+  .navegacion-superior {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .nav-link {
+    text-decoration: none;
+    color: #0984e3;
+    transition: color 0.2s;
+  }
+
+  .nav-link:hover { color: #1a1a1a; }
+
+  .separador { color: #dfe6e9; }
+  
+  .disabled { color: #b2bec3; cursor: not-allowed; }
+
+  article { margin-top: 20px; }
+
+  /* Mantenemos el estilo de las imágenes que ya tenías */
+  article img {
+    width: 100%;
+    border-radius: 12px;
+    margin: 30px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   }
 </style>
