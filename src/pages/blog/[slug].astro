@@ -24,6 +24,7 @@ const { Content } = await post.render();
   <head>
     <meta charset="utf-8" />
     <title>{post.data.title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
 
@@ -244,4 +245,36 @@ const { Content } = await post.render();
   }
   
   .volver:hover { color: #0984e3; transform: translateX(-3px); }
+  /* Ajustes para móviles */
+  @media (max-width: 600px) {
+    .contenedor-principal {
+      margin: 15px auto;
+      padding: 0 15px;
+    }
+
+    h1 {
+      font-size: 1.8rem; /* Título más pequeño para que no corte */
+    }
+
+    .header-contenido {
+      flex-direction: column; /* Nombre arriba, "Blog oficial" abajo */
+      gap: 10px;
+      text-align: center;
+    }
+
+    .usuario {
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .navegacion-superior {
+      font-size: 0.75rem; /* Flechas un poco más compactas */
+      gap: 10px;
+    }
+
+    .volver {
+      padding: 5px 10px;
+      font-size: 0.75rem;
+    }
+  }
 </style>
